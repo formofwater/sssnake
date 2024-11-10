@@ -1,5 +1,10 @@
 'use strict';
 
+/*
+TODO:
+
+*/
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
@@ -16,8 +21,8 @@ const config = {
 }
 
 const snake = {
-  x: 0,
-  y: 0,
+  x: canvas.width / 2,
+  y: canvas.height / 2,
   // dx: config.sizeCell,
   dx: 1,
   dy: 0,
@@ -25,19 +30,17 @@ const snake = {
   maxBodyCells: 3
 }
 
+let direction = 'right';
+
 let berry = {
   x: 100,
   y: 0,
   spawn: function() {
+    // randomPositionBerry();
     ctx.fillStyle = 'red';
-    // this.x = getRandomInt(0, canvas.width);
-    // this.y = getRandomInt(0, canvas.height);
-
     ctx.fillRect(this.x, this.y, config.sizeCell, config.sizeCell);
   }
 }
-
-let direction = 'right';
 
 function drawSnake() {
   if (direction === 'right' || direction === 'down') {
@@ -47,7 +50,6 @@ function drawSnake() {
     snake.x -= snake.dx;
     snake.y -= snake.dy;
   }
-
 
   snake.bodyCells.unshift({ x: snake.x, y: snake.y });
 
@@ -63,29 +65,21 @@ function drawSnake() {
     }
     ctx.fillRect(el.x, el.y, config.sizeCell, config.sizeCell);
 
-    if (snake.bodyCells[0].x === 320 && snake.bodyCells[1].x === 319) {
+    if (snake.bodyCells[0].y === 0 && direction === 'up') {
+      snake.y = 400;
+    } else if (snake.bodyCells[0].x === 0 && direction === 'left') {
+      snake.x = 320;
+    } else if (snake.bodyCells[0].y === 400 && direction === 'down') {
+      snake.y = 0;
+    } else if (snake.bodyCells[0].x === 320 && direction === 'right') {
       snake.x = 0;
     }
-    else if (snake.bodyCells[0].y === 1 && snake.bodyCells[1].y === 2) { // 0 1 TypeError: Cannot read properties of undefined (reading 'y')
-      snake.y = 400;
-    }
-    else if (snake.bodyCells[0].y === 400 && snake.bodyCells[1].y === 399) {
-      snake.y = 0;
-    }
-    else if (snake.bodyCells[0].x === 0 && snake.bodyCells[1].x === 1) {
-      snake.x = 320;
-    }
 
-
-    // if (snake.bodyCells[0].x > snake.bodyCells[1].x) {
-    //   direction = 'right';
-    // }
-
-    // if (el.x === berry.x && el.y === berry.y) {
-    //   snake.maxBodyCells++;
-    //   increaseScore(score);
-    //   randomPositionBerry();
-    // }
+    if (el.x === berry.x && el.y === berry.y) {
+      snake.maxBodyCells++;
+      increaseScore(score);
+      randomPositionBerry();
+    }
 
     for (let i = idx + 1; i < snake.bodyCells.length; i++) {
       refreshGame();
@@ -98,7 +92,8 @@ function refreshGame() {
 }
 
 function randomPositionBerry() {
-  // todo
+  berry.x = getRandomInt(0, canvas.width);
+  berry.y = getRandomInt(0, canvas.height);
 }
 
 function moveSnake() {
